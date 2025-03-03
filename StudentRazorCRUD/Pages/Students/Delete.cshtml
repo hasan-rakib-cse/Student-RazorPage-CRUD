@@ -1,0 +1,51 @@
+﻿@page
+@model StudentRazorCRUD.Pages.Students.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Student</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Std.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Std.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Std.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Std.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Std.Phone)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Std.Phone)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Std.Subscribed)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Std.Subscribed)
+        </dd>
+    </dl>
+</div>
+
+@* <form method="POST">
+    <input type="hidden" asp-for="Std.Id" />
+    <a class="btn btn-sm btn-danger" asp-page="./Delete" asp-route-id="@Model?.Std.Id">Delete</a>
+    <a class="btn btn-sm btn-primary" asp-page="./Index">Back to List</a>
+</form> *@
+
+<form method="post">
+    <input type="hidden" asp-for="Std.Id" />
+    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+    <a class="btn btn-sm btn-primary" asp-page="./Index">Back to List</a>
+</form>

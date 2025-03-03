@@ -1,0 +1,60 @@
+﻿@page
+@model StudentRazorCRUD.Pages.Students.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+<p>
+    <a class="btn btn-sm btn-primary" asp-page="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentList[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentList[0].Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentList[0].Phone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentList[0].Subscribed)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.StudentList)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Subscribed)
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-warning" asp-page="./Edit" asp-route-id="@item.Id">Edit</a>
+                    <a class="btn btn-sm btn-secondary" asp-page="./Details" asp-route-id="@item.Id">Details</a>
+                    <a class="btn btn-sm btn-danger" asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+                @* The dynamically generated links pass the movie ID with a query string *@
+                @* <td>
+                    <a href="/Movies/Edit?id=1">Edit</a> |
+                    <a href="/Movies/Details?id=1">Details</a> |
+                    <a href="/Movies/Delete?id=1">Delete</a>
+                </td> *@
+            </tr>
+        }
+    </tbody>
+</table>
