@@ -43,28 +43,34 @@ namespace StudentRazorCRUD.Pages.Students
             {
                 return Page();
             }
-            _db.Students.Update(Std);
             try
             {
+                _db.Students.Update(Std);
                 await _db.SaveChangesAsync();
             }
-            catch(DbUpdateConcurrencyException)
+            catch(Exception err)
             {
-                if(!StudentExist(Std.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }            
+                Console.WriteLine(err.Message);
+                ModelState.AddModelError("", "An error occurred while updating the student record.");
+                return Page();
+            }
+            //catch(DbUpdateConcurrencyException)
+            //{
+            //    if(!StudentExist(Std.Id))
+            //    {
+            //        return NotFound();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}            
             return RedirectToPage("./Index");
         }
 
-        private bool StudentExist(int id)
-        {
-            return _db.Students.Any(s => s.Id == id);
-        }
+        //private bool StudentExist(int id)
+        //{
+        //    return _db.Students.Any(s => s.Id == id);
+        //}
     }
 }
