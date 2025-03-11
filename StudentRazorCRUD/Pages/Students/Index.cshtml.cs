@@ -125,9 +125,11 @@ namespace StudentRazorCRUD.Pages.Students
 
                 // Add data rows
                 int rowIndex = 1;
+                
                 foreach (var student in studentList)
                 {
                     IRow row = excelSheet.CreateRow(rowIndex++);
+                    colIndex = 0;
                     foreach (var prop in properties)
                     {
                         var value = prop.GetValue(student, null);
