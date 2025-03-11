@@ -7,6 +7,7 @@ using OfficeOpenXml;
 using StudentRazorCRUD.Data;
 using StudentRazorCRUD.Models;
 using System.Reflection;
+using System.Text;
 
 namespace StudentRazorCRUD.Pages.Students
 {
@@ -37,9 +38,6 @@ namespace StudentRazorCRUD.Pages.Students
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Set EPPlus license context
             using (var package = new ExcelPackage(stream))
             {
-                //var worksheet = package.Workbook.Worksheets.Add("Students");
-                //worksheet.Cells.LoadFromCollection(StudentList, true);
-                //package.Save();
                 var workSheet = package.Workbook.Worksheets.Add("Sheet1");
                 workSheet.TabColor = System.Drawing.Color.Black;
                 workSheet.DefaultRowHeight = 12;
@@ -119,9 +117,10 @@ namespace StudentRazorCRUD.Pages.Students
 
                 // Create header row automatically
                 IRow headerRow = excelSheet.CreateRow(0);
-                for (int i = 0; i < properties.Length; i++)
+                int colIndex = 0;
+                foreach (var prop in properties)
                 {
-                    headerRow.CreateCell(i).SetCellValue(properties[i].Name);
+                    headerRow.CreateCell(colIndex++).SetCellValue(prop.Name);
                 }
 
                 // Add data rows
@@ -129,10 +128,10 @@ namespace StudentRazorCRUD.Pages.Students
                 foreach (var student in studentList)
                 {
                     IRow row = excelSheet.CreateRow(rowIndex++);
-                    for (int i = 0; i < properties.Length; i++)
+                    foreach (var prop in properties)
                     {
-                        var value = properties[i].GetValue(student, null);
-                        row.CreateCell(i).SetCellValue(value?.ToString() ?? string.Empty);
+                        var value = prop.GetValue(student, null);
+                        row.CreateCell(colIndex++).SetCellValue(value?.ToString() ?? string.Empty);
                     }
                 }
                 workbook.Write(fs);
@@ -145,6 +144,76 @@ namespace StudentRazorCRUD.Pages.Students
             memory.Position = 0;
 
             return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sFileName);
+        }
+
+        public async Task<IActionResult> OnPostExportText()
+        {
+            var studentList = await _db.Students.FromSqlRaw("EXEC GetStudentList").ToListAsync();
+
+            // Define file path
+            string sWebRootFolder = _hostingEnvironment.WebRootPath;
+            string sFileName = "Students.txt";
+            string filePath = Path.Combine(sWebRootFolder, sFileName);
+
+            // Use StringBuilder to build the text content
+            StringBuilder sb = new StringBuilder();
+
+            // Get properties of Student class dynamically
+            PropertyInfo[] properties = typeof(Student).GetProperties();
+
+            // Generate header dynamically
+            sb.AppendLine(string.Join(", ", properties.Select(p => p.Name)));
+
+            // Generate data rows dynamically
+            foreach (var student in studentList)
+            {
+                var values = properties.Select(p => p.GetValue(student, null)?.ToString() ?? string.Empty);
+                sb.AppendLine(string.Join(", ", values));
+            }
+
+            // Write data to the text file
+            await System.IO.File.WriteAllTextAsync(filePath, sb.ToString(), Encoding.UTF8);
+
+            // Read the file and return as a download
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+
+            return File(memory, "text/plain", sFileName);
+        }
+
+        public async Task<IActionResult> OnPostExportText2()
+        {
+            var studentList = await _db.Students.FromSqlRaw("EXEC GetStudentList").ToListAsync();
+
+            // Define file path
+            string sWebRootFolder = _hostingEnvironment.WebRootPath;
+            string sFileName = "SavedLists.txt";
+            string filePath = Path.Combine(sWebRootFolder, sFileName);
+
+            Directory.CreateDirectory(sWebRootFolder);
+
+            // Open StreamWriter
+            using (TextWriter tw = new StreamWriter(filePath, false, Encoding.UTF8))
+            {
+                foreach (var student in studentList)
+                {
+                    tw.WriteLine($"{student.Id}, {student.Name}, {student.Email}, {student.Phone}, {student.Subscribed}");
+                }
+            }
+
+            // Read the file and return as download
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+
+            return File(memory, "text/plain", sFileName);
         }
     }
 }

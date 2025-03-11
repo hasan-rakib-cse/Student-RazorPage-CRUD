@@ -7,17 +7,23 @@
 <h1>Index</h1>
 <p><a class="btn btn-sm btn-primary" asp-page="Create">Create New</a></p>
 
-<form method="post" class="mb-2">
-    <button type="submit" asp-page-handler="Export" class="btn btn-sm btn-outline-primary">Export to Excel</button>
-</form>
-
-<form method="post" class="mb-2">
-    <button type="submit" asp-page-handler="Export2" class="btn btn-sm btn-outline-primary">Download Excel</button>
-</form>
-
-<form method="post" class="mb-2">
-    <button type="submit" asp-page-handler="Export3" class="btn btn-sm btn-outline-primary">Save Excel</button>
-</form>
+<div class="d-flex gap-2">
+    <form method="post" class="mb-2">
+        <button type="submit" asp-page-handler="Export" class="btn btn-sm btn-outline-primary">Export to Excel</button>
+    </form>
+    <form method="post" class="mb-2">
+        <button type="submit" asp-page-handler="Export2" class="btn btn-sm btn-outline-secondary">Download Excel</button>
+    </form>
+    <form method="post" class="mb-2">
+        <button type="submit" asp-page-handler="Export3" class="btn btn-sm btn-outline-info">Save Excel</button>
+    </form>
+    <form method="post" class="mb-2">
+        <button type="submit" asp-page-handler="ExportText" class="btn btn-sm btn-outline-success">Save Text</button>
+    </form>
+    <form method="post">
+        <button type="submit" asp-page-handler="ExportText2" class="btn btn-sm btn-outline-warning">Download TXT</button>
+    </form>
+</div>
 
 <table class="table">
     <thead>
